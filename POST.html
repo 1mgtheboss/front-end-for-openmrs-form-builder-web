@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+
+    <title></title>
+</head>
+
+<body>
+    <script>
+$(function() {
+    var n = 0;
+    $("body").append("<center><input id='add-form-btn' type='button' value='Add Form'><input id='post-btn' type='button' value='POST'><input id='restart-btn' type='button' value='Restart'><\/center>");
+    $('input#restart-btn').click(function() {
+        location.reload();
+    });
+    $('input#add-form-btn').click(function() {
+        $("body").append("<center><br>Form name:&nbsp;&nbsp;<input type='text' id='form-name'><br><input id='add-field-btn' type='button' value='Add Field'><\/center>");
+        $('input#add-field-btn').click(function() {
+            n++;
+            $("body").append("<center>Field name:&nbsp;&nbsp;<input type='text' id='" + n + "'><\/center>");
+        });
+    });
+    $('input#post-btn').click(function() {
+        var formUUID;
+        var formData = new Object();
+        formData.name = $('#form-name').val();
+        formData.version = "0.1";
+        var sFD = JSON.stringify(formData); /*Under Development*/
+    });
+});
+    </script>
+</body>
+</html>
