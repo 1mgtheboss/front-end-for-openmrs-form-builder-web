@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+    <title>Form Builder</title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+</head>
+
+<body>
+    <div id="forms"></div><br>
+    <br>
+    <br>
+    <br>
+
+    <form>
+        <input id="fUUID" type="text"> <button id="gF" type="button">Get
+        Form</button><br>
+        <br>
+    </form>
+
+    <div id="form"></div><script>
+
+    $().ready(function() {
+    var url = 'http://localhost:8081/openmrs-standalone/ws/rest/v1/form';
+    var fD = $('#forms').html("");
+    $.get(url, function(data) {
+        for (var i = 0; i < data.results.length; i++)
+        fD.append(data.results[i].display + "&nbsp;&nbsp;&nbsp;&nbsp;" + data.results[i].uuid + "<br>");
+    });
+});
+$('#gF').click(function() {
+    $('#form').html("");
+    var fUUID = $('#fUUID').val();
+    var formUrl = "http://localhost:8081/openmrs-standalone/ws/rest/v1/form/" + fUUID;
+    var fF = new Array();
+    $.get(formUrl + "?v=custom:(uuid,name,formFields)", function(data) {
+        $('#form').append(data.name + "<br><br>");
+        var n = data.formFields.length;
+        for (var i = 0; i < n; i++) {
+            var result = null;
+            var fieldUUID = data.formFields[i].uuid;
+            var formfieldUrl = formUrl + "/formfield/" + fieldUUID + "?v=custom:" + "%28uuid,field,sortWeight%29";
+            $.ajax({
+                url: formfieldUrl,
+                success: function(data) {
+                    result = data;
+                },
+                async: false
+            });
+            fF.push(result);
+        }
+        fF.sort(function(a, b) {
+            keyA = parseFloat(a.sortWeight);
+            keyB = parseFloat(b.sortWeight);
+            return keyA - keyB;
+        });
+        for (var i = 0; i < fF.length; i++) {
+            var html = "";
+            var cData;
+            var conceptUUID = fF[i].field.concept === null ? "None" : fF[i].field.concept.uuid;
+            if (conceptUUID === "None") html = fF[i].field.display + "&nbsp;&nbsp;<input type=\"text\" id=\"" + fF[i].uuid + "\"><br>";
+            else {
+                $.ajax({
+                    url: "http://localhost:8081/openmrs-standalone/ws/rest/v1/concept/" + conceptUUID,
+                    success: function(data) {
+                        cData = data;
+                    },
+                    async: false
+                });
+                if (cData.answers.length != 0) {
+                    if (fF[i].field.selectMultiple === true) {
+                        for (var j = 0; j < cData.answers.length; j++) {
+                            html += "<input type='checkbox'>" + cData.answers[j].display + "<br>";
+                        }
+                        html = "<br>" + html;
+                    } else {
+                        for (var j = 0; j < cData.answers.length; j++) {
+                            html += "<option>" + cData.answers[j].display + "<\/option>";
+                        }
+                        html = "<select>" + html + "<\/select>";
+                    }
+                    html = fF[i].field.display + "&nbsp;&nbsp;" + html + "<br>";
+                } else {
+                    html = fF[i].field.display + "&nbsp;&nbsp;<input type=\"text\" id=\"" + fF[i].uuid + "\"><br>";
+                }
+            }
+            $('#form').append(html);
+        }
+    });
+});
+    </script>
+</body>
+</html>
