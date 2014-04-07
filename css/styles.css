@@ -1,8 +1,10 @@
 body {
-    background-color: #08b8e1;
-    color: #fff;
+    
+	overflow: hidden;
 }
 
 input[type=button] {
-    background-color: #fff;
+    background-color: #ffffff;
+	
 }
+

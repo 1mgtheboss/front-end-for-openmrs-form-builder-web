@@ -10,15 +10,15 @@
 <body>
     <script>
 $(function() {
-    $("body").append("<div id='forms'><\/div><br><br><br><br><div id='form'><\/div>");
+    $("body").append("<div id='forms'></div><br><br><br><br><div id='form'></div>");
     var url = 'http://localhost:8081/openmrs-standalone/ws/rest/v1/form';
     var fD = $('#forms').html("");
     $('#form').html("None selected.");
     $.get(url, function(data) {
-        var dDMHTML = "<select id='formsDDM'><option value='None'>SELECT<\/option>";
+        var dDMHTML = "<select id='formsDDM'><option value='None'>SELECT</option>";
         for (var i = 0; i < data.results.length; i++)
-        dDMHTML += "<option value='" + data.results[i].uuid + "'>" + data.results[i].display + "<\/option>";
-        dDMHTML += "<\/select>"
+        dDMHTML += "<option value='" + data.results[i].uuid + "'>" + data.results[i].display + "</option>";
+        dDMHTML += "</select>"
         fD.append(dDMHTML);
         $('#formsDDM').change(function() {
             $('#form').html("Loading...");
@@ -71,9 +71,9 @@ $(function() {
                                     html = "<br>" + html;
                                 } else {
                                     for (var j = 0; j < cData.answers.length; j++) {
-                                        html += "<option>" + cData.answers[j].display + "<\/option>";
+                                        html += "<option>" + cData.answers[j].display + "</option>";
                                     }
-                                    html = "<select>" + html + "<\/select>";
+                                    html = "<select>" + html + "</select>";
                                 }
                                 html = fF[i].field.display + "&nbsp;&nbsp;" + html + "<br>";
                             } else {
